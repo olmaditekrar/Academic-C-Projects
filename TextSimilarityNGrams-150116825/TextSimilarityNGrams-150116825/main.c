@@ -13,13 +13,13 @@ typedef struct node** nodePtrPtr;
 
 FILE *inpf1,*inpf2;
 nodePtr createLinkedListFromInputFile(FILE *inputFile);
-int insert_sorted(nodePtrPtr, char[]);
+nodePtr insert_sorted(nodePtrPtr, char[]);
 nodePtr delete(nodePtrPtr, char[]);
-nodePtr search(nodePtr, char[]);
+int search(nodePtr, char[]);
 void showTheList (nodePtr header);
 int insert_original(nodePtrPtr header , char x[]); //Insert the node without sort or any other comparements . For input files !
-void buildOneGrams(nodePtrPtr header1 ,nodePtrPtr one_gr_hdr, char currentString[]);
-
+nodePtr buildOneGrams(nodePtrPtr header1 ,nodePtrPtr one_gr_hdr, char currentString[]);
+nodePtr buildTwoGrams (nodePtrPtr header1 , nodePtrPtr header2 , nodePtrPtr two_gr_hdr);
 
 
 
@@ -39,11 +39,18 @@ int main() {
         printf("Input2 File Could Not Be Opened!\n");
         return 0;
     }
-    hdr1,hdr2 ,one_gr_hdr,two_gr_hdr= NULL;
-    one_gr_hdr = malloc(sizeof(node));
-    two_gr_hdr = malloc(sizeof(node));
-    strcpy(one_gr_hdr -> x ,"None");
-    strcpy(two_gr_hdr -> x ,"None");
+    hdr1 = malloc(sizeof(nodePtr)) ;
+    hdr2 = malloc(sizeof(nodePtr));
+    one_gr_hdr = malloc(sizeof(nodePtr)) ;
+    two_gr_hdr= malloc(sizeof(nodePtr)) ;
+    
+    hdr1 ->next = NULL;
+    hdr2 ->next = NULL;
+    one_gr_hdr ->next = NULL;
+    two_gr_hdr ->next = NULL;
+
+    
+    
     
     while (!feof(inpf1)) {
         while (fscanf(inpf1, " %1023s", word) == 1) {
@@ -56,7 +63,8 @@ int main() {
         
     }
     
-    
+    int countFor2Grams = 0;
+    char prevWord [25];
     while (!feof(inpf2)) {
         while (fscanf(inpf2, " %1023s", word2) == 1) {
             //printf("Current Word in Input2 : %s \n",word);
@@ -64,25 +72,121 @@ int main() {
             if(insert_original(&hdr2, word2)!=1){
                 printf("\nInsert Original went wrong !") ;
             }
-            else{ //We won't compare these two lists in another method , by doing that we will save "N" inputSize/time .
-                buildOneGrams(&hdr1, &one_gr_hdr, word2);
+            else{
+                
+                
+                
+                
+                
+                if(search(one_gr_hdr, word2) == 1){
+                    
+                    printf("\n%s already exists in : one_gr_hdr ! ", word2);
+                    
+                    //If the word is in the one_gr_hdr , it is common in both of the documents !
+                    
+                    countFor2Grams ++ ;
+                    if ( countFor2Grams == 2){
+                        //TWO GRAMS !
+                    }else {
+                        //NO TWO GRAMS YET!
+                    }
+                    
+                    strcpy(prevWord,word2);
+
+                    
+                    
+                    
+                }else{
+                    if (search(hdr1, word2) == 0) {
+                        printf("\n%s is not exists in : header1 ! ", word2);
+                        countFor2Grams = 0 ;
+                        strcpy(prevWord,word2);
+                        
+                       // return NULL ;
+                    }else {
+                        
+                        printf("\n>> One Gram Found : %s",word2);
+                        
+                        countFor2Grams ++ ;
+                        if ( countFor2Grams == 2){
+                            //TWO GRAMS !
+                        }else {
+                            //NO TWO GRAMS YET!
+                            strcpy(prevWord,word2);
+                        }
+                        
+                        insert_sorted(&one_gr_hdr, word2) ;
+                        
+                        
+                    }
+                    
+                    
+                }
+                
+                
+                
+                
+                
+                
+                //We won't compare these two lists in another method , by doing that we will save "N" inputSize/time .
+
+                
+//                    if (search(hdr1, word2) == NULL) {
+//                        printf("%s is not exists in : header1 ! ", word2);
+//                        countFor2Grams = 0 ;
+////                        return NULL ;
+//                    }else {
+//
+//                         insert_sorted(&one_gr_hdr, word2) ;
+//                            countFor2Grams++ ;
+//                            if (countFor2Grams == 2){
+//                                //We have 2 grams !
+//                                printf("\n2 GRAM BULUNDU --- %s %s !",prevWord , word2);
+//
+//                                countFor2Grams = 1 ;
+//                            }
+//
+//
+//                        strcpy(prevWord,word2);
+                    }
+                    
+                    
+                
+                
+                
+                
+                
+                
+                
+                
+                
                 
 
             }
         }
         
-        printf("\n-- Linked List 1 for Input1 File --\n");
-        showTheList(hdr1);
         
         
         
-
-        printf("\n-- Linked List 2 for Input2 File --\n");
-        showTheList(hdr2);
-        printf("\n-- Linked List One Gram Header --\n");
         
-        showTheList(one_gr_hdr);
-    }
+        
+        
+        
+        
+//        if ( hdr1 != NULL , hdr2 != NULL , one_gr_hdr != NULL , two_gr_hdr != NULL){
+//            printf("\n-- Linked List 1 for Input1 File --\n");
+//            showTheList(hdr1->next);
+//            printf("\n-- Linked List 2 for Input2 File --\n");
+//            showTheList(hdr2->next);
+            printf("\n\n-- Linked List One Gram Header --\n");
+            showTheList(one_gr_hdr->next);
+//            printf("\n-- Linked List Two Gram Header --\n");
+//            showTheList(two_gr_hdr->next);
+//        }else {
+//            printf("Header or Headers are Empty .");
+//        }
+    
+    
     
     
     
@@ -92,7 +196,6 @@ int main() {
     
     return 0;
 }
-
 
 int insert_original(nodePtrPtr header , char x[]){ //Insert the node without sort or any other comparements . For input files !
     
@@ -104,11 +207,11 @@ int insert_original(nodePtrPtr header , char x[]){ //Insert the node without sor
     newNode->next=NULL;
     
     // if LL empty
-    if (*header == NULL)
-        *header=newNode;
+    if ((*header)->next == NULL)
+        (*header)->next = newNode;
     // if LL not empty
     else {
-        temp=*header;
+        temp=(*header)->next;
         while (temp != NULL ) {
             prev=temp;
             temp=temp->next;
@@ -119,28 +222,28 @@ int insert_original(nodePtrPtr header , char x[]){ //Insert the node without sor
     return 1;
    
 }
-int insert_sorted(nodePtrPtr header, char x[]){
+nodePtr insert_sorted(nodePtrPtr header, char x[]){
     
     nodePtr newNode, temp, prev;
     
     // create node to insert and assign values to its fields
-    newNode=malloc(sizeof(node));
+    newNode = malloc(sizeof(node));
     strcpy(newNode->x,x);
     newNode->next=NULL;
-    
+    prev = *header;
     // if LL empty
-    if (*header == NULL)
-        *header=newNode;
+    if ((*header)->next == NULL)
+        (*header)->next=newNode;
     // if LL not empty
     else {
-        temp=*header;
+        temp=(*header)->next;
         while (temp != NULL && strcmp(temp->x,newNode->x) < 0 ) {
             prev=temp;
             temp=temp->next;
         }
         
         if (temp!=NULL && strcmp(temp->x,newNode->x)==0 ) {
-            printf("existent key");
+            // Existent key !
             return 0;
         }
         
@@ -154,9 +257,10 @@ int insert_sorted(nodePtrPtr header, char x[]){
         // otherwise insert node in correct position
         else
             prev->next=newNode;
+        
     }
     
-    return 1;
+    return newNode;
     
 }
 
@@ -177,10 +281,10 @@ void showTheList (nodePtr header){
     
 }
 
-nodePtr search(nodePtr header, char x[]){
+int search(nodePtr header, char x[]){
 
     nodePtr temp, prev;
-    temp=header;
+    temp=header->next;
 
     while (temp != NULL && strcmp(temp->x,x) != 0 ){
         temp=temp->next;
@@ -188,51 +292,45 @@ nodePtr search(nodePtr header, char x[]){
 
     if (temp==NULL) {
         // end of LL ... key non-existent ...
-        printf("non-existent key ");
-        return NULL;
+        // Non - Existent key !
+        return 0;
     }
-    if (strcmp(temp->x,x)==0 && strcmp(temp->x, "None") !=0)
+    if (strcmp(temp->x,x)==0 )
         // search successful ...
-        return temp;
+        return 1;
     else {    // key non-existent ...
-        printf("non-existent key ");
-        return NULL;
+        // Non - Existent key !
+         return 0;
     }
 
 }
 
-void buildOneGrams(nodePtrPtr header1 ,nodePtrPtr one_gr_hdr, char currentString[]){
+nodePtr buildOneGrams(nodePtrPtr header1 ,nodePtrPtr one_gr_hdr, char currentString[]){
     
     
     if(search(*one_gr_hdr, currentString) != NULL){
         
         printf("%s already exists in : one_gr_hdr ! ", currentString);
-        return ;
+        return NULL;
     }else{
         if (search(*header1, currentString) == NULL) {
             printf("%s is not exists in : header1 ! ", currentString);
-            return ;
+            return NULL ;
         }else {
-            insert_sorted(one_gr_hdr, currentString) ;
+            
+            return insert_sorted(one_gr_hdr, currentString) ;
         }
         
         
     }
+  
+}
+
+nodePtr buildTwoGrams (nodePtrPtr header1 , nodePtrPtr header2 , nodePtrPtr two_gr_hdr){
     
     
     
-    
-    
-    
-    
-    
-    
-   
-    
-    
-    
-    
-    
+    return NULL ;
     
 }
 
