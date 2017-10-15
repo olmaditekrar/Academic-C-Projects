@@ -1,1 +1,1 @@
-If you don't know the maximum length of each word, you can use something similar to this answer to get the complete line, then use sscanf instead, using a buffer as large as the one created to read in the complete line. Or, you linked lists could use strtok to slice the read in line up into words. onur onur onur. There ordinal
+Term Frequency is a feature representation technique. Term frequency is often used in text mining field. Term Frequency measures how frequently a term occurs in a document.
