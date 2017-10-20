@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "string.h"
+#include <unistd.h>
+
 struct node {
     char x[50];
     struct node *next;
@@ -29,9 +31,16 @@ char* concat(const char *s1, const char *s2);
 int main() {
     
     nodePtr hdr1,hdr2, one_gr_hdr , two_gr_hdr;
-    char *word,*word2;  // I am creating a new word variable because it is crashing the main thread when try to kill the program .
+    char *word,*word2;  // I am creating a new word variable for input2 current word pointer because it is crashing the main thread when try to kill the program .
+    
     word = malloc(sizeof(char[50]));
     word2 = malloc(sizeof(char[50]));
+    
+    
+    
+    char cwd[1024];
+    getcwd(cwd, sizeof(cwd));
+    printf("Current working dir: %s\n", cwd); //Want to see the path.
 
     // read file and construct LL
     if((inpf1 = fopen("/Users/onur/Desktop/Projects/Academic-C-Projects/TextSimilarityNGrams-150116825/TextSimilarityNGrams-150116825/input1.txt","r")) == NULL){
@@ -131,7 +140,8 @@ int main() {
     
     return 0;
 }
-char* concat(const char *s1, const char *s2){
+
+char* concat(const char *s1, const char *s2){ //For string combining in 2_grams.
     char *result = malloc(strlen(s1)+strlen(s2)+strlen(" ")+1);//+1 for the null-terminator
     //in real code you would check for errors in malloc here
     strcpy(result, s1);
@@ -140,7 +150,8 @@ char* concat(const char *s1, const char *s2){
     return result;
 }
 
-char* convertToAlphabet(char *line){
+
+char* convertToAlphabet(char *line){//Deletes all the unused data in strings.
     int i ,j;
     line[0] = tolower(line[0]);
     for(i = 0; line[i] != '\0'; ++i)
@@ -158,6 +169,7 @@ char* convertToAlphabet(char *line){
     
     return line;
 }
+
 
 nodePtr insert_original(nodePtrPtr header , char x[]){ //Insert the node without sort or any other comparements . For input files !
     
@@ -187,7 +199,8 @@ nodePtr insert_original(nodePtrPtr header , char x[]){ //Insert the node without
     return newNode;
    
 }
-nodePtr insert_sorted(nodePtrPtr header, char x[]){
+
+nodePtr insert_sorted(nodePtrPtr header, char x[]){ //Insert ith sorted fashion , eliminate the similarities.
     
     nodePtr newNode, temp, prev;
     
@@ -236,7 +249,8 @@ nodePtr insert_sorted(nodePtrPtr header, char x[]){
     return newNode;
     
 }
-void showTheReversedList ( nodePtr header) {
+
+void showTheReversedList ( nodePtr header) { //For demo if we want to see the reversed list .
     
     nodePtr iterator = header;
     while (iterator->next != NULL) {
@@ -253,7 +267,8 @@ void showTheReversedList ( nodePtr header) {
     
     
 }
-void showTheList (nodePtr header){
+
+void showTheList (nodePtr header){ //Listing function for showing the results.
     nodePtr iterator = header;
     printf("\nNodes :");
     int counter = 0 ;
@@ -266,7 +281,8 @@ void showTheList (nodePtr header){
     
     
 }
-nodePtr search(nodePtr header, char x[]){
+
+nodePtr search(nodePtr header, char x[]){ //Searching the lists for desired input.
 
     nodePtr temp;
     temp=header;
@@ -289,47 +305,3 @@ nodePtr search(nodePtr header, char x[]){
     }
 
 }
-
-//nodePtr delete(nodePtrPtr header, char word[]){
-//
-//    nodePtr temp, prev;
-//
-//    // if LL empty ...
-//    if (*header == NULL) {
-//        printf("empty list!...");
-//        return NULL;
-//    }
-//    // if LL not empty ...
-//    else {
-//        // search key in list ...
-//        temp=*header;
-//        while (temp != NULL && temp->x<word) {
-//            prev=temp;
-//            temp=temp->next;
-//        }
-//
-//        // end of LL ... key non-existent ...
-//        if (temp==NULL) {
-//            printf("non-existent key");
-//            return NULL;
-//        }
-//        // key existent ...
-//        else if (temp->x==num) {
-//            // first record to remove ...
-//            if (temp==*header)
-//                *header=temp->next;
-//            // a subsequent record to remove ...
-//            else
-//                prev->next=temp->next;
-//
-//            return temp;
-//        }
-//        // key non-existent ...
-//        else {
-//            printf("non-existent key");
-//            return NULL;
-//        }
-//    }
-//}
-//
-
