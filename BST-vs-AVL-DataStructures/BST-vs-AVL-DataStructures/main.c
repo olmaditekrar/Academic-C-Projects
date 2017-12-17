@@ -479,6 +479,8 @@ long long getUsedMemory(){
 
 int main()
 {
+    
+    
     struct NodeAVL *rootAVL = NULL;
     BstTreeNode* rootBST = NULL ;
     double timeBSTinsertion=0.0 ,timeBSTdeletion = 0.0,timeAVLinsertion=0.0,timeAVLdeletion=0.0;
@@ -491,7 +493,7 @@ int main()
     
     //PREPROCESSING WITH PYTHON (GENERATING  "worstCase.txt" )
     
-    //system("python /Users/mac/Desktop/Projects/Academic-C-Projects/BST-vs-AVL-DataStructures/convertToProcessedOnurCanYucedag.py");
+    system("python /Users/mac/Desktop/Projects/Academic-C-Projects/BST-vs-AVL-DataStructures/convertToProcessedOnurCanYucedag.py");
     
     //
     
@@ -619,6 +621,9 @@ int main()
     
     
     free(rootAVL);
+    
+    
+    
     return 0;
 }
 
